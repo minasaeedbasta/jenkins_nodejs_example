@@ -1,0 +1,39 @@
+trigger:
+- rds_redis
+
+pool:
+  name: 'my-pool'
+
+variables:
+  RDS_HOSTNAME: $(RDS_HOSTNAME)
+  RDS_PORT: $(RDS_PORT)
+  RDS_USERNAME: $(RDS_USERNAME)
+  RDS_PASSWORD: $(RDS_PASSWORD)
+  REDIS_HOSTNAME: $(REDIS_HOSTNAME)
+  REDIS_PORT: $(REDIS_PORT)
+
+steps:
+- task: DockerInstaller@0
+  displayName: 'Install Docker'
+  inputs:
+    dockerVersion: 'latest'
+
+- task: Docker@2
+  displayName: 'Build and run Docker image'
+  inputs:
+    containerRegistry: '$(dockerRegistryServiceConnection)'
+    repository: 'nodejs-app-with-dockerfile'
+    command: 'buildAndPush'
+    Dockerfile: 'dockerfile'
+
+- script: |
+    docker rm -f nodejs || true
+    docker run -d -p 3000:3000 \
+    -e RDS_HOSTNAME=$(RDS_HOSTNAME) \
+    -e RDS_PORT=$(RDS_PORT) \
+    -e RDS_USERNAME=$(RDS_USERNAME) \
+    -e RDS_PASSWORD=$(RDS_PASSWORD) \
+    -e REDIS_HOSTNAME=$(REDIS_HOSTNAME) \
+    -e REDIS_PORT=$(REDIS_PORT) \
+    --name nodejs $(dockerRegistryServiceConnection)/nodejs
+  displayName: 'Run Docker container'
