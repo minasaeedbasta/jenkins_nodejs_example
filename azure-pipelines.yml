@@ -19,12 +19,11 @@ steps:
     dockerVersion: 'latest'
 
 - task: Docker@2
-  displayName: 'Build and run Docker image'
   inputs:
-    containerRegistry: '$(dockerRegistryServiceConnection)'
+    containerRegistry: 'docker-hub'
     repository: 'nodejs-app-with-dockerfile'
     command: 'buildAndPush'
-    Dockerfile: 'dockerfile'
+    Dockerfile: '**/dockerfile'
 
 - script: |
     docker rm -f nodejs || true
@@ -35,5 +34,5 @@ steps:
     -e RDS_PASSWORD=$(RDS_PASSWORD) \
     -e REDIS_HOSTNAME=$(REDIS_HOSTNAME) \
     -e REDIS_PORT=$(REDIS_PORT) \
-    --name nodejs $(dockerRegistryServiceConnection)/nodejs
+    --name nodejs minabasta/nodejs-app-with-dockerfile
   displayName: 'Run Docker container'
