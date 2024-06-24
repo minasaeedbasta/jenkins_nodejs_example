@@ -16,7 +16,7 @@ steps:
 - task: DockerInstaller@0
   displayName: 'Install Docker'
   inputs:
-    dockerVersion: 'latest'
+    dockerVersion: '17.09.0-ce'
 
 - task: Docker@2
   inputs:
