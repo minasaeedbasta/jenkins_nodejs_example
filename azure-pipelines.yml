@@ -4,14 +4,6 @@ trigger:
 pool:
   name: 'my-pool'
 
-variables:
-  RDS_HOSTNAME: $(RDS_HOSTNAME)
-  RDS_PORT: $(RDS_PORT)
-  RDS_USERNAME: $(RDS_USERNAME)
-  RDS_PASSWORD: $(RDS_PASSWORD)
-  REDIS_HOSTNAME: $(REDIS_HOSTNAME)
-  REDIS_PORT: $(REDIS_PORT)
-
 steps:
 - task: DockerInstaller@0
   displayName: 'Install Docker'
