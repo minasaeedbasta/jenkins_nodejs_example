@@ -26,8 +26,8 @@ steps:
     Dockerfile: '**/dockerfile'
 
 - script: |
-    docker rm -f nodejs || true
-    docker run -d -p 3000:3000 \
+    sudo docker rm -f nodejs || true
+    sudo docker run -d -p 3000:3000 \
     -e RDS_HOSTNAME=$(RDS_HOSTNAME) \
     -e RDS_PORT=$(RDS_PORT) \
     -e RDS_USERNAME=$(RDS_USERNAME) \
