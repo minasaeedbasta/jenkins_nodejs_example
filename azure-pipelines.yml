@@ -43,11 +43,11 @@ stages:
         
         # Run the new container
         docker run -d -p 3000:3000 \
-        -e RDS_HOSTNAME=${RDS_HOSTNAME} \
-        -e RDS_PORT=${RDS_PORT} \
-        -e RDS_USERNAME=${RDS_USERNAME} \
-        -e RDS_PASSWORD=${RDS_PASSWORD} \
-        -e REDIS_HOSTNAME=${REDIS_HOSTNAME} \
-        -e REDIS_PORT=${REDIS_PORT} \
+        -e RDS_HOSTNAME=$(RDS_HOSTNAME) \
+        -e RDS_PORT=$(RDS_PORT) \
+        -e RDS_USERNAME=$(RDS_USERNAME) \
+        -e RDS_PASSWORD=$(RDS_PASSWORD) \
+        -e REDIS_HOSTNAME=$(REDIS_HOSTNAME) \
+        -e REDIS_PORT=$(REDIS_PORT) \
         --name nodejs minabasta/nodejs-app-with-dockerfile:$(Build.BuildId)
       displayName: 'Run Docker container'
