@@ -3,6 +3,8 @@ trigger:
 
 pool:
   name: 'my-pool'
+  demands:
+    - agent.name -equals app-agent
 
 steps:
 - task: DockerInstaller@0
@@ -18,8 +20,8 @@ steps:
     Dockerfile: '**/dockerfile'
 
 - script: |
-    sudo docker rm -f nodejs || true
-    sudo docker run -d -p 3000:3000 \
+    docker rm -f nodejs || true
+    docker run -d -p 3000:3000 \
     -e RDS_HOSTNAME=$(RDS_HOSTNAME) \
     -e RDS_PORT=$(RDS_PORT) \
     -e RDS_USERNAME=$(RDS_USERNAME) \
