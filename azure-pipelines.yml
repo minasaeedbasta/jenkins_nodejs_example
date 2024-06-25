@@ -6,27 +6,46 @@ pool:
   demands:
     - agent.name -equals app-agent
 
-steps:
-- task: DockerInstaller@0
-  displayName: 'Install Docker'
-  inputs:
-    dockerVersion: '17.09.0-ce'
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: BuildJob
+    displayName: 'Build and Push Docker Image'
+    steps:
+    - task: DockerInstaller@0
+      displayName: 'Install Docker'
+      inputs:
+        dockerVersion: '17.09.0-ce'
 
-- task: Docker@2
-  inputs:
-    containerRegistry: 'docker-hub'
-    repository: 'minabasta/nodejs-app-with-dockerfile'
-    command: 'buildAndPush'
-    Dockerfile: '**/dockerfile'
+    - task: Docker@2
+      displayName: 'Build and Push Docker Image'
+      inputs:
+        containerRegistry: 'docker-hub'
+        repository: 'minabasta/nodejs-app-with-dockerfile'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
 
-- script: |
-    docker rm -f nodejs || true
-    docker run -d -p 3000:3000 \
-    -e RDS_HOSTNAME=$(RDS_HOSTNAME) \
-    -e RDS_PORT=$(RDS_PORT) \
-    -e RDS_USERNAME=$(RDS_USERNAME) \
-    -e RDS_PASSWORD=$(RDS_PASSWORD) \
-    -e REDIS_HOSTNAME=$(REDIS_HOSTNAME) \
-    -e REDIS_PORT=$(REDIS_PORT) \
-    --name nodejs minabasta/nodejs-app-with-dockerfile
-  displayName: 'Run Docker container'
+- stage: Deploy
+  displayName: 'Deploy Stage'
+  dependsOn: Build
+  jobs:
+  - job: DeployJob
+    displayName: 'Deploy Docker Container'
+    steps:
+    - script: |
+        # Remove existing container if it exists
+        if [ "$(docker ps -aq -f name=nodejs)" ]; then
+          docker rm -f nodejs
+        fi
+        
+        # Run the new container
+        docker run -d -p 3000:3000 \
+        -e RDS_HOSTNAME=${RDS_HOSTNAME} \
+        -e RDS_PORT=${RDS_PORT} \
+        -e RDS_USERNAME=${RDS_USERNAME} \
+        -e RDS_PASSWORD=${RDS_PASSWORD} \
+        -e REDIS_HOSTNAME=${REDIS_HOSTNAME} \
+        -e REDIS_PORT=${REDIS_PORT} \
+        --name nodejs minabasta/nodejs-app-with-dockerfile
+      displayName: 'Run Docker container'
