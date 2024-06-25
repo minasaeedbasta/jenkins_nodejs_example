@@ -25,6 +25,8 @@ stages:
         repository: 'minabasta/nodejs-app-with-dockerfile'
         command: 'buildAndPush'
         Dockerfile: '**/dockerfile'
+        tags: |
+          $(Build.BuildId)
 
 - stage: Deploy
   displayName: 'Deploy Stage'
@@ -47,5 +49,5 @@ stages:
         -e RDS_PASSWORD=${RDS_PASSWORD} \
         -e REDIS_HOSTNAME=${REDIS_HOSTNAME} \
         -e REDIS_PORT=${REDIS_PORT} \
-        --name nodejs minabasta/nodejs-app-with-dockerfile
+        --name nodejs minabasta/nodejs-app-with-dockerfile:$(Build.BuildId)
       displayName: 'Run Docker container'
