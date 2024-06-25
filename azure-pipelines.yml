@@ -24,7 +24,7 @@ stages:
         containerRegistry: 'docker-hub'
         repository: 'minabasta/nodejs-app-with-dockerfile'
         command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
+        Dockerfile: '**/dockerfile'
 
 - stage: Deploy
   displayName: 'Deploy Stage'
